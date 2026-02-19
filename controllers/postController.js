@@ -4,23 +4,13 @@ const connection = require('./../data/db');
 
 function index(req, res) {
 
-    //throw new Error("Errore di test middleware");
+    const sql = 'SELECT * FROM posts';
 
-    let filteredPost = postsList;
-
-    if (req.query.tags || req.query.title) {
-        filteredPost = postsList.filter(post =>
-            post.tags.includes(req.query.tags)
-            || post.title.includes(req.query.title)
-        );
-    }
-
-    const ojbectPosts = {
-        postsNumber: filteredPost.length,
-        posts: filteredPost
-    }
-
-    res.json(ojbectPosts);
+    connection.query(sql, (err, results) => {
+        if (err)
+            return res.status(500).json({ error: 'Database query failed' });
+        res.json(results);
+    });
 }
 
 function show(req, res) {

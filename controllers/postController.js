@@ -14,19 +14,26 @@ function index(req, res) {
 }
 
 function show(req, res) {
-    const postId = postsList.find(post =>
-        post.id === parseInt(req.params.id));
+    const id = parseInt(req.params.id);
 
-    if (!postId) {
-        res.status(404);
-        return res.json({
-            error: "404 Not Found",
-            message: "post non trovato"
-        })
-    }
+    const sql = 'SELECT * FROM posts WHERE id = ?';
 
-    res.json(postId);
+    connection.query(sql, [id], (err, results) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ error: 'Failed to show post' });
+        }
 
+        if (results.length === 0) {
+
+            return res.status(404).json({
+                error: "404 Not Found",
+                message: "Post not found"
+            });
+        }
+
+        res.json(results[0]);
+    });
 }
 
 function store(req, res) {
@@ -105,7 +112,7 @@ function destroy(req, res) {
 
     connection.query(sql, [id], (err) => {
         if (err)
-            return res.status(500).json({ error: 'Failed to delete blog' });
+            return res.status(500).json({ error: 'Failed to delete post' });
         res.sendStatus(204)
     });
 }

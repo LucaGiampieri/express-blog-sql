@@ -1,5 +1,7 @@
 const postsList = require('../data/posts');
 
+const connection = require('./../data/db');
+
 function index(req, res) {
 
     //throw new Error("Errore di test middleware");
